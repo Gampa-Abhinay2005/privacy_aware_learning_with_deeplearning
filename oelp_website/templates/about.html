@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Overview - Algorithms</title>
+    <link rel="stylesheet" href="about.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="./static.html">Get The App</a>
+            <div class="navbar__menu_container">
+                <a href="./homepage.html" class="link">
+                    <button class="btn_h btn">Home</button>
+                </a>
+                <a href="./about.html" class="link">
+                    <button class="btn">About</button>
+                </a>
+                <a href="./resourses.html" class="link">
+                    <button class="btn">Resources</button>
+                </a>
+                <a href="./userguide.html" class="link">
+                    <button class="btn">User Guide</button>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="overview">
+            <h1>Quick Overview of algorithms used</h1>
+
+            <p>This page provides a mathematical explanation and comparison of the following algorithms: 
+               Feedforward Neural Network (FNN), DPSGD, DPSignSGD, and DPSignAdam. These algorithms are designed to ensure the privacy of training data by adding noise to the gradients during model training.</p>
+
+            <!-- FNN (Feedforward Neural Network) Section -->
+            <h2>Feedforward Neural Network (FNN)</h2>
+            <p>The **FNN** is a simple artificial neural network architecture where data moves in one direction from input to output. The model consists of an input layer, one or more hidden layers, and an output layer. The goal of FNN is to minimize the error between predicted outputs and true values.</p>
+            <p>The mathematical formulation for a single layer of the network is:</p>
+            <pre>
+                zₖ = Wₖ x + bₖ
+            </pre>
+            <p>Where:
+                <ul>
+                    <li><b>zₖ</b>: Weighted sum of the inputs for the k-th neuron</li>
+                    <li><b>Wₖ</b>: Weight matrix for the k-th neuron</li>
+                    <li><b>x</b>: Input vector</li>
+                    <li><b>bₖ</b>: Bias term for the k-th neuron</li>
+                </ul>
+            </p>
+
+            <p>The output of each layer is passed through a non-linear activation function, such as ReLU or sigmoid:</p>
+            <pre>
+                aₖ = f(zₖ)
+            </pre>
+            <p>Where <b>f()</b> is the activation function, and <b>aₖ</b> is the activation of the k-th neuron.</p>
+
+            <p>The goal is to minimize the loss function \( L(\theta) \) (e.g., cross-entropy loss for classification) by adjusting the weights and biases using backpropagation:</p>
+            <pre>
+                θₖ₊₁ = θₖ - η ∇θL(θₖ)
+            </pre>
+            <p>Where:
+                <ul>
+                    <li><b>θₖ</b>: Parameters (weights and biases)</li>
+                    <li><b>η</b>: Learning rate</li>
+                    <li><b>∇θL(θₖ)</b>: Gradient of the loss function with respect to the parameters</li>
+                </ul>
+            </p>
+
+            <p>The backpropagation algorithm computes gradients by applying the chain rule of calculus and updates the parameters iteratively to minimize the loss function. The FNN can have multiple hidden layers and is typically trained using stochastic gradient descent (SGD) or its variants.</p>
+
+            <!-- DPSGD Section -->
+            <h2>Differentially Private Stochastic Gradient Descent (DPSGD)</h2>
+            <p>The **DPSGD** algorithm adds noise to the gradients computed during each iteration of SGD to preserve the privacy of individual data points. It updates the model parameters as follows:</p>
+            <pre>
+                θₖ₊₁ = θₖ - η (∇L(θₖ; X_b) + N(0, σ²))
+            </pre>
+            <p>Where:
+                <ul>
+                    <li><b>θₖ₊₁</b>: Updated model parameters</li>
+                    <li><b>η</b>: Learning rate</li>
+                    <li><b>∇L(θₖ; X_b)</b>: Gradient of the loss function with respect to the model parameters</li>
+                    <li><b>N(0, σ²)</b>: Gaussian noise added to the gradient</li>
+                </ul>
+            </p>
+
+            <p><b>Gradient Clipping:</b> The gradients are clipped to a maximum norm C to limit the influence of any single data point on the model:</p>
+            <pre>
+                ∇θL(θ; X_b) ← min(C, ||∇θL(θ; X_b)||₂)
+            </pre>
+
+            <p>The privacy cost \( \epsilon \) is affected by the noise scale \( \sigma \) and the number of updates. A larger \( \sigma \) improves privacy but reduces accuracy:</p>
+            <pre>
+                ε ≈ 2 ⋅ sampling rate ⋅ number of updates ⋅ σ
+            </pre>
+
+            <!-- DPSignSGD Section -->
+            <h2>DPSignSGD (Sign-based Differentially Private SGD)</h2>
+            <p>The **DPSignSGD** algorithm modifies **DPSGD** by applying a **sign** operation to the noisy gradients. The update rule is:</p>
+            <pre>
+                θₖ₊₁ = θₖ - η sign(∇L(θₖ; X_b) + N(0, σ²))
+            </pre>
+            <p>This approach makes the algorithm more robust to noise and emphasizes directionality rather than magnitude, which provides additional privacy protection by removing information about the magnitude of the gradients.</p>
+
+            <p><b>Gradient Clipping:</b> Similar to DPSGD, gradients are clipped to a maximum norm C before noise is added:</p>
+            <pre>
+                ∇θL(θ; X_b) ← min(C, ||∇θL(θ; X_b)||₂)
+            </pre>
+            <p>Then, the noisy gradients are updated by the sign of the clipped gradients:</p>
+            <pre>
+                θₖ₊₁ = θₖ - η ⋅ sign(∇θL(θ; X_b) + N(0, σ²))
+            </pre>
+            <p>The sign operation reduces the sensitivity to the magnitude of the gradients, which helps preserve privacy but can result in a loss of accuracy due to the loss of gradient magnitude information.</p>
+
+            <!-- DPSignAdam Section -->
+            <h2>DPSignAdam (Adam with Sign-based Gradient Updates)</h2>
+            <p>The **DPSignAdam** algorithm combines the **Adam optimizer** with the **sign-based gradient updates**. Adam uses momentum-based updates to compute first and second moment estimates:</p>
+            <pre>
+                mₖ = β₁ mₖ₋₁ + (1 - β₁) ∇L(θₖ; X_b)
+                vₖ = β₂ vₖ₋₁ + (1 - β₂) (∇L(θₖ; X_b))²
+            </pre>
+            <p>Where \( \beta_1 \) and \( \beta_2 \) are decay rates for the first and second moments, respectively. After calculating the momentum estimates, the bias-corrected moments are computed as:</p>
+            <pre>
+                m̂ₖ = mₖ / (1 - β₁ᵗ)
+                v̂ₖ = vₖ / (1 - β₂ᵗ)
+            </pre>
+            <p>The update rule becomes:</p>
+            <pre>
+                θₖ₊₁ = θₖ - η m̂ₖ / √(v̂ₖ + ε)
+            </pre>
+            <p>Similar to DPSignSGD, noise is added to the gradients and the sign operation is applied:</p>
+            <pre>
+                noisy gradient = sign(∇θL(θₖ; X_b) + N(0, σ²))
+            </pre>
+            <p>The final update is:</p>
+            <pre>
+                θₖ₊₁ = θₖ - η m̂ₖ / √(v̂ₖ + ε) ⋅ sign(∇θL(θₖ; X_b) + N(0, σ²))
+            </pre>
+            <p>Adam’s adaptive learning rate allows the model to converge faster and more accurately, even with noisy gradients. The sign operation provides additional privacy at the cost of accuracy.</p>
+
+            <!-- Comparison Table -->
+            <h2>Comparison Table: DPSGD, DPSignSGD, and DPSignAdam</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Criteria</th>
+                        <th>DPSGD</th>
+                        <th>DPSignSGD</th>
+                        <th>DPSignAdam</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Gradient Update Method</td>
+                        <td>Standard SGD</td>
+                        <td>SGD with sign of noisy gradients</td>
+                        <td>Adam optimizer with first and second moment estimates, with noise and sign</td>
+                    </tr>
+                    <tr>
+                        <td>Privacy Mechanism</td>
+                        <td>Gradient clipping + Gaussian noise</td>
+                        <td>Gradient clipping + sign of noisy gradients</td>
+                        <td>Gradient clipping + momentum-based updates (Adam) + Gaussian noise + sign</td>
+                    </tr>
+                    <tr>
+                        <td>Model Complexity</td>
+                        <td>Simple SGD algorithm</td>
+                        <td>Slightly more complex due to sign-based updates</td>
+                        <td>More complex due to use of Adam optimizer with momentum and bias correction</td>
+                    </tr>
+                    <tr>
+                        <td>Space Complexity</td>
+                        <td>O(n) for storing gradients, parameters, and noisy gradients</td>
+                        <td>O(n), slightly higher due to extra storage for signs</td>
+                        <td>O(n), higher due to the storage of first and second moments (m and v)</td>
+                    </tr>
+                    <tr>
+                        <td>Time Complexity (Per Epoch)</td>
+                        <td>O(N × d)</td>
+                        <td>O(N × d), slightly higher due to additional operations for signing gradients</td>
+                        <td>O(N × d), higher due to momentum updates (m and v)</td>
+                    </tr>
+                    <tr>
+                        <td>Training Time (Performance)</td>
+                        <td>Moderate (standard SGD)</td>
+                        <td>Moderate (slightly higher due to sign operation)</td>
+                        <td>Slower (higher computational cost due to Adam's moment calculations)</td>
+                    </tr>
+                    <tr>
+                        <td>Space Efficiency</td>
+                        <td>Efficient (standard SGD, no moment storage)</td>
+                        <td>Efficient but adds space for signed gradients</td>
+                        <td>Less efficient (needs space for moments m and v, along with gradients)</td>
+                    </tr>
+                    <tr>
+                        <td>Accuracy</td>
+                        <td>Dependent on noise scale and clipping threshold</td>
+                        <td>Typically lower than DPSGD (due to noise addition and sign operations)</td>
+                        <td>Typically higher than DPSGD and DPSignSGD (due to Adam’s momentum and bias correction)</td>
+                    </tr>
+                    <tr>
+                        <td>Privacy Preservation</td>
+                        <td>Good (via gradient clipping and noise)</td>
+                        <td>Good (strong privacy, but noise added to signed gradients)</td>
+                        <td>Best among the three (more robust privacy preservation due to momentum and noise)</td>
+                    </tr>
+                    <tr>
+                        <td>Hyperparameter Tuning</td>
+                        <td>Requires tuning for noise scale and clipping norm</td>
+                        <td>Requires tuning for noise scale, clipping norm, and learning rate</td>
+                        <td>Requires tuning for learning rate, noise scale, and Adam's parameters (beta1, beta2, epsilon)</td>
+                    </tr>
+                    <tr>
+                        <td>Robustness</td>
+                        <td>Moderate robustness under privacy-preserving conditions</td>
+                        <td>High robustness (noise addition helps mitigate outliers)</td>
+                        <td>Very high robustness (Adam's moment estimates help in stabilizing the training process)</td>
+                    </tr>
+                    <tr>
+                        <td>Effectiveness for Large Datasets</td>
+                        <td>Moderate (works well with large datasets with standard SGD)</td>
+                        <td>Slightly worse than DPSGD (due to noise and sign)</td>
+                        <td>Very effective (Adam’s adaptive learning rate makes it more efficient for large datasets)</td>
+                    </tr>
+                    <tr>
+                        <td>Best Use Case</td>
+                        <td>Simple scenarios with moderate privacy requirements</td>
+                        <td>Scenarios where privacy needs sign-based modification</td>
+                        <td>Complex scenarios with high privacy requirements and large datasets, where moment updates help stabilize learning</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Your Website</p>
+    </footer>
+</body>
+</html>

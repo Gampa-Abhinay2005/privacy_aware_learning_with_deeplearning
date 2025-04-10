@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Model Training</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+        }
+
+        form {
+            background-color: white;
+            padding: 20px;
+            max-width: 600px;
+            margin: 20px auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input[type="number"], select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        h2, h3 {
+            text-align: center;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        img {
+            display: block;
+            margin: 0 auto;
+            max-width: 90%;
+            border-radius: 4px;
+        }
+
+        .comparison-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .comparison-container div {
+            text-align: center;
+            width: 45%;
+        }
+
+        .error-message {
+            color: red;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+    <script>
+        // JavaScript to dynamically show neuron inputs based on the number of hidden layers
+        function updateNeuronInputs() {
+            const numHiddenLayers = document.getElementById("num_hidden_layers").value;
+            const neuronsDiv = document.getElementById("neurons_inputs");
+            neuronsDiv.innerHTML = ''; // Clear previous inputs
+
+            for (let i = 0; i < numHiddenLayers; i++) {
+                // Create label and input for neurons in each layer
+                const label = document.createElement("label");
+                label.textContent = `Number of Neurons in Layer ${i + 1}:`;
+                const input = document.createElement("input");
+                input.type = "number";
+                input.name = `neurons_layer_${i}`;
+                input.required = true;
+
+                neuronsDiv.appendChild(label);
+                neuronsDiv.appendChild(input);
+                neuronsDiv.appendChild(document.createElement("br"));
+            }
+        }
+
+        // Trigger update of neuron inputs when the page loads or number of layers changes
+        window.onload = function () {
+            document.getElementById("num_hidden_layers").addEventListener("input", updateNeuronInputs);
+        };
+    </script>
+</head>
+<body>
+    <h1>Model Optimization and Noise Evaluation</h1>
+
+    <form method="POST">
+        <label for="optimizer">Choose Optimizer:</label>
+        <select name="optimizer">
+            <option value="1" {% if optimizer_choice == '1' %}selected{% endif %}>Adam</option>
+            <option value="2" {% if optimizer_choice == '2' %}selected{% endif %}>SGD</option>
+            <option value="3" {% if optimizer_choice == '3' %}selected{% endif %}>Both</option>
+        </select><br>
+
+        <label for="noise_type">Choose Noise Type:</label>
+        <select name="noise_type">
+            <option value="gaussian" {% if noise_type == 'gaussian' %}selected{% endif %}>Gaussian</option>
+            <option value="laplace" {% if noise_type == 'laplace' %}selected{% endif %}>Laplace</option>
+        </select><br>
+
+        <label for="num_hidden_layers">Number of Hidden Layers:</label>
+        <input type="number" name="num_hidden_layers" value="{{ num_hidden_layers }}" min="1"><br>
+
+        <div id="neurons">
+            {% for i in range(num_hidden_layers) %}
+                <label for="neurons_layer_{{ i }}">Neurons in Layer {{ i }}:</label>
+                <input type="number" name="neurons_layer_{{ i }}" value="{{ neurons_per_layer[i] }}" min="1"><br>
+            {% endfor %}
+        </div>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    {% if plot_url_acc_adam %}
+        <h2>Adam Optimizer Accuracy</h2>
+        <img src="{{ plot_url_acc_adam }}" alt="Adam Optimizer Accuracy Plot">
+    {% endif %}
+    {% if plot_url_acc_sgd %}
+        <h2>SGD Optimizer Accuracy</h2>
+        <img src="{{ plot_url_acc_sgd }}" alt="SGD Optimizer Accuracy Plot">
+    {% endif %}
+    
+<!-- {% if plot_url_acc_both %}
+<h2>Both Optimizers Accuracy</h2>
+<div class="comparison-container">
+    <div>
+        <h3>Adam Optimizer</h3>
+        <img src="{{ plot_url_acc_adam }}" alt="Adam Optimizer Accuracy Plot">
+    </div>
+    <div>
+        <h3>SGD Optimizer</h3>
+        <img src="{{ plot_url_acc_sgd }}" alt="SGD Optimizer Accuracy Plot">
+    </div>
+</div>
+{% endif %} -->
+    {% if plot_url_noise %}
+        <h2>Error with Noise</h2>
+        <img src="{{ plot_url_noise }}" alt="Error with Noise Plot">
+    {% endif %}
+    {% if plot_url_optimizer_comparison %}
+        <h2>Optimizer Comparison: Adam vs SGD (Validation Loss)</h2>
+        <img src="{{ plot_url_optimizer_comparison }}" alt="Optimizer Comparison Plot">
+    {% endif %}
+
+
+    {% if error_message %}
+        <p style="color: red;">Error: {{ error_message }}</p>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,163 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Body and Layout */
+body {
+    background-color: #f4f9f9;
+    color: #333;
+    line-height: 1.6;
+}
+
+main {
+    padding: 30px;
+    margin: 0 auto;
+    max-width: 1200px;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.navbar button{
+    border: 0px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    height: auto;
+    width: auto;
+    font-size: large;
+    /* font-weight: bold; */
+    font-family: 'Gill Sans';
+    transition-duration: 200ms;
+}
+.btn:hover{
+    color: rgb(56, 50, 50);
+    scale: 1.1;
+}
+.btn:active{
+    color: black;
+    scale: 1.2;
+}
+
+.navbar a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease;
+}
+
+.navbar a:hover{
+    color: rgb(56, 50, 50);
+    scale: 1.1;
+}
+.navbar .active {
+    color: black;
+    scale: 1.05;
+}
+
+/* Main Header */
+h1 {
+    font-size: 2.5em;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Section Titles */
+h2 {
+    font-size: 2em;
+    color: #4CAF50;
+    margin-top: 40px;
+    margin-bottom: 10px;
+}
+
+/* Paragraphs */
+p {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+    color: #555;
+}
+
+/* List Styling */
+ul {
+    margin-left: 20px;
+    list-style-type: disc;
+}
+
+ul li {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+}
+
+ul li a {
+    text-decoration: none;
+    color: #4CAF50;
+    transition: color 0.3s ease;
+}
+
+ul li a:hover {
+    color: #45a049;
+}
+
+/* Section Styling */
+.resources {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.fnn-resources, .algorithm-resources {
+    margin-bottom: 30px;
+}
+
+/* Footer */
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    margin-top: 40px;
+    font-size: 1em;
+}
+
+footer p {
+    margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .navbar a {
+        padding: 10px;
+        font-size: 1em;
+    }
+
+    main {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 2.2em;
+    }
+
+    h2 {
+        font-size: 1.8em;
+    }
+}
